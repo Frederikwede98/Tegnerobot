@@ -5,7 +5,9 @@
  */
 package black_and_white_image;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
@@ -23,6 +25,7 @@ public class Black_and_white_image {
         BufferedImage binary = null;
         try {
             BufferedImage img = ImageIO.read(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\Rainbow.PNG"));
+            
             binary = new BufferedImage(img.getWidth(), img.getHeight(),
                     BufferedImage.TYPE_BYTE_BINARY);
 
@@ -36,13 +39,13 @@ public class Black_and_white_image {
                     color = binary.getRGB(x, y);
 
                     if (color == -1) {
-                        binary.setRGB(x, y, -16777216);
-                    } else {
                         binary.setRGB(x, y, -1);
+                    } else {
+                        binary.setRGB(x, y, -16777216);
                     }
 
                     System.out.println(color);
-                    colors.add(color);
+                    colors.add(color); 
 
                 }
             }
@@ -68,7 +71,21 @@ public class Black_and_white_image {
         }
         File file = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
         int [][]compute = compute(file);
+        createResizedCopy(OriginalImage,150, 150, true);   
         }
+    BufferedImage createResizedCopy(Image OriginalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha)
+    {
+        System.out.println("resizing...");
+        int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+        BufferedImage scaledBI = new BufferedImage(150, 150, PNG);
+        Graphics2D g = scaledBI.createGraphics();
+        if (preserveAlpha) {
+            g.setComposite(AlphaComposite.Src);
+        }
+        g.drawImage(img, 0, 0, scaledWidth, scaledHeight, null); 
+        g.dispose();
+        return scaledBI;
+    }
     
 
     public static int[][] convertToArray(BufferedImage image) {
