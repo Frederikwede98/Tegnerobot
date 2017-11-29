@@ -16,16 +16,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 public class Black_and_white_image {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         File s = null;
         BufferedImage binary = null;
         try {
             BufferedImage img = ImageIO.read(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\Rainbow.PNG"));
-            
+
             binary = new BufferedImage(img.getWidth(), img.getHeight(),
                     BufferedImage.TYPE_BYTE_BINARY);
 
@@ -45,7 +47,7 @@ public class Black_and_white_image {
                     }
 
                     System.out.println(color);
-                    colors.add(color); 
+                    colors.add(color);
 
                 }
             }
@@ -66,124 +68,138 @@ public class Black_and_white_image {
         try {
             BufferedImage image = ImageIO.read(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg"));
 //            binary2 = new BufferedImage(image.getWidth(), image.getHeight(), image.getRGB(0, 0));
-        }catch (IOException e) {
+        } catch (IOException e) {
             System.out.println(" " + e.getMessage());
         }
         File file = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
-        int [][]compute = compute(file);
-        createResizedCopy(OriginalImage,150, 150, true);   
+        int[][] compute = compute(file);
+        BufferedImage image = ImageIO.read(file);
+        BufferedImage resized = resize(image, 150, 300);
+        File output = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
+        ImageIO.write(resized, "jpg", output);
+    }
+
+    /*
+        Image image;
+         image = ImageIO.read(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg"));
+            BufferedImage buffered = (BufferedImage) image;
+            createResizedCopy(buffered,300, 600, true);
         }
-    BufferedImage createResizedCopy(Image OriginalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha)
+    
+    public static BufferedImage createResizedCopy(Image OriginalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha)
     {
         System.out.println("resizing...");
         int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-        BufferedImage scaledBI = new BufferedImage(150, 150, PNG);
+        BufferedImage scaledBI = new BufferedImage(600, 318, 1);
         Graphics2D g = scaledBI.createGraphics();
         if (preserveAlpha) {
             g.setComposite(AlphaComposite.Src);
         }
+        Image img = null;
         g.drawImage(img, 0, 0, scaledWidth, scaledHeight, null); 
         g.dispose();
         return scaledBI;
     }
-    
+     */
+    private static BufferedImage resize(BufferedImage img, int height, int width) {
+        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return resized;
+    }
 
     public static int[][] convertToArray(BufferedImage image) {
 
         if (image == null || image.getWidth() == 0 || image.getHeight() == 0) {
             return null;
         }
-            // This returns bytes of data starting from the top left of the bitmap
-            // image and goes down.
-            // Top to bottom. Left to right.
-            final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        // This returns bytes of data starting from the top left of the bitmap
+        // image and goes down.
+        // Top to bottom. Left to right.
+        final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
-            final int width = image.getWidth();
-            final int height = image.getHeight();
+        final int width = image.getWidth();
+        final int height = image.getHeight();
 
-            int[][] result = new int[height][width];
+        int[][] result = new int[height][width];
 
-            boolean done = false;
-            boolean alreadyWentToNextByte = false;
-            int byteIndex = 0;
-            int row = 0;
-            int col = 0;
-            int numBits = 0;
-            byte currentByte = pixels[byteIndex];
-            while (!done) {
-                alreadyWentToNextByte = false;
+        boolean done = false;
+        boolean alreadyWentToNextByte = false;
+        int byteIndex = 0;
+        int row = 0;
+        int col = 0;
+        int numBits = 0;
+        byte currentByte = pixels[byteIndex];
+        while (!done) {
+            alreadyWentToNextByte = false;
 
-                result[row][col] = (currentByte & 0x80) >> 7;
-                currentByte = (byte) (((int) currentByte) << 1);
-                numBits++;
+            result[row][col] = (currentByte & 0x80) >> 7;
+            currentByte = (byte) (((int) currentByte) << 1);
+            numBits++;
 
-                if ((row == height - 1) && (col == width - 1)) {
-                    done = true;
-                } else {
-                    col++;
+            if ((row == height - 1) && (col == width - 1)) {
+                done = true;
+            } else {
+                col++;
 
-                    if (numBits == 8) {
+                if (numBits == 8) {
+                    currentByte = pixels[++byteIndex];
+                    numBits = 0;
+                    alreadyWentToNextByte = true;
+                }
+
+                if (col == width) {
+                    row++;
+                    col = 0;
+
+                    if (!alreadyWentToNextByte) {
                         currentByte = pixels[++byteIndex];
                         numBits = 0;
-                        alreadyWentToNextByte = true;
-                    }
-
-                    if (col == width) {
-                        row++;
-                        col = 0;
-
-                        if (!alreadyWentToNextByte) {
-                            currentByte = pixels[++byteIndex];
-                            numBits = 0;
-                        }
                     }
                 }
             }
+        }
 
-            return result;
-        }
-    public static int[][] compute(File file)
-{
-try 
-{
-    BufferedImage image= ImageIO.read(file);
-    Raster raster=image.getData();
-    int w=raster.getWidth(),h=raster.getHeight();
-    int pixels[][]=new int[w][h];
-    for (int x=0;x<w;x++)
-    {
-        for(int y=0;y<h;y++)
-        {
-            pixels[x][y]=raster.getSample(x,y,0);
-        }
+        return result;
     }
-            String[] position = {"X","Y"};
-   try (
-                PrintStream output = new PrintStream(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\output.txt"));
-            ){
 
-            for(int i =0;i<position.length;i++){
-                String sc ="";
-                for (int j=0;j<pixels[i].length;j++){
-                        sc+=pixels[i][j]+" ";
+    public static int[][] compute(File file) {
+        try {
+            BufferedImage image = ImageIO.read(file);
+            Raster raster = image.getData();
+            int w = raster.getWidth(), h = raster.getHeight();
+        
+            int pixels[][] = new int[w][h];
+            for (int x = 0; x < w; x++) {
+                for (int y = 0; y < h; y++) {
+
+                    pixels[x][y] = raster.getSample(x, y, 0);
                 }
-                output.println("Placering  " + position[i] + " værdi af pixels " + sc);
             }
-            output.close();
+            String[] position = {"X", "Y"};
+            try (
+                    PrintStream output = new PrintStream(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\output.txt"));) {
 
-        } catch (FileNotFoundException e) {
+                for (int i = 0; i < position.length; i++) {
+                    String sc = "";
+                    for (int j = 0; j < pixels[i].length; j++) {
+                        sc += pixels[i][j] + " ";
+                    }
+                    output.println("Placering  " + position[i] + " værdi af pixels " + sc);
+                }
+                output.close();
 
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            }
+            return pixels;
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    return pixels;
-
-}
-catch (Exception e)
-{
-    e.printStackTrace();
-}
-return null;
-}
+        return null;
     }
-
-    
+}
