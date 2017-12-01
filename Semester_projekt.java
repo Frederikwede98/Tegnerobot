@@ -66,7 +66,7 @@ public class Semester_projekt {
         ImageIO.write(resized, "jpg", scale_output);
         //Picture p1 = new Picture(scale_output); 
         //Here we find the value of the pixels in the picture and print them to a text file
-        File outputtest = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\billeder\\output_pixels.jpg");
+        File outputtest = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\billeder\\scale_output.jpg");
     int[][] compute = compute(outputtest);
 
 }
