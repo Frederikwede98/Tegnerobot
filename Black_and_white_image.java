@@ -66,25 +66,25 @@ public class Black_and_white_image {
             System.out.println("Error: " + e);
 
         }
-        BufferedImage binary2 = null;
+       /* BufferedImage binary2 = null;
         try {
             BufferedImage image = ImageIO.read(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg"));
 //            binary2 = new BufferedImage(image.getWidth(), image.getHeight(), image.getRGB(0, 0));
         } catch (IOException e) {
             System.out.println(" " + e.getMessage());
-        }
-        File file = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
-        int[][] compute = compute(file);
-        BufferedImage image = ImageIO.read(file);
-        BufferedImage resized = resize(image, 400, 800);
-        File output = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
+        } */
+        File input = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
+        BufferedImage image = ImageIO.read(input);
+        BufferedImage resized = resize(image, 12, 24);
+        File output = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture_output.jpg");
         ImageIO.write(resized, "jpg", output);
-        
-       Picture p1 = new Picture("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg"); 
+         File outputtest = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture_output_test.jpg");
+       Picture p1 = new Picture(output); 
        p1.getRGB(0, 0);
        System.out.println(p1.getImage());
        
        p1.show();
+       int[][] compute = compute(outputtest);
     }
 
     /*
@@ -183,22 +183,32 @@ public class Black_and_white_image {
             int pixels[][] = new int[w][h];
             for (int x = 0; x < w; x++) {
                 for (int y = 0; y < h; y++) {
-
+                    
                     pixels[x][y] = raster.getSample(x, y, 0);
                 }
             }
             String[] position = {"X", "Y"};
             try (
                     PrintStream output = new PrintStream(new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\output.txt"));) {
-
-                for (int i = 0; i < position.length; i++) {
+                 for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                   // output.print(pixels[x][y] + ", ");
+                   if (pixels[x][y] < 125){
+                       output.println("x " + x + " y " + y);
+                   }
+                }
+                output.println("");
+                 }
+                 
+                    
+               /* for (int i = 0; i < position.length; i++) {
                     String sc = "";
                     for (int j = 0; j < pixels[i].length; j++) {
                         sc += pixels[i][j] + " ";
                     }
                     output.println("Placering  " + position[i] + " værdi af pixels " + sc);
                 }
-                output.close();
+                */output.close();
 
             } catch (FileNotFoundException e) {
 
