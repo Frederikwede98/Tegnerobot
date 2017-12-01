@@ -5,7 +5,7 @@
  */
 package black_and_white_image;
 
-import java.awt.AlphaComposite;
+//import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -16,8 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 public class Black_and_white_image {
@@ -39,7 +39,9 @@ public class Black_and_white_image {
             for (int y = 0; y < binary.getHeight(); y++) {
                 for (int x = 0; x < binary.getWidth(); x++) {
                     color = binary.getRGB(x, y);
+                    
 
+                    
                     if (color == -1) {
                         binary.setRGB(x, y, -1);
                     } else {
@@ -74,9 +76,15 @@ public class Black_and_white_image {
         File file = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
         int[][] compute = compute(file);
         BufferedImage image = ImageIO.read(file);
-        BufferedImage resized = resize(image, 150, 300);
+        BufferedImage resized = resize(image, 400, 800);
         File output = new File("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg");
         ImageIO.write(resized, "jpg", output);
+        
+       Picture p1 = new Picture("C:\\Users\\frede\\Videos\\SDU Robot Diplom\\Semester projekt 1\\new picture.jpg"); 
+       p1.getRGB(0, 0);
+       System.out.println(p1.getImage());
+       
+       p1.show();
     }
 
     /*
@@ -101,6 +109,7 @@ public class Black_and_white_image {
         return scaledBI;
     }
      */
+    
     private static BufferedImage resize(BufferedImage img, int height, int width) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
